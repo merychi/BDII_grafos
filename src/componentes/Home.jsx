@@ -43,7 +43,7 @@ export const Home = () => {
     const handleBuscar = async () => {
         console.log("Origen seleccionado:", selectedEstaciones.origen);
         console.log("Destino seleccionado:", selectedEstaciones.destino);
-
+    
         if (selectedEstaciones.origen && selectedEstaciones.destino) {
             if (selectedEstaciones.origen.value === selectedEstaciones.destino.value) {
                 alert("El punto origen debe ser diferente al punto de destino.");
@@ -51,12 +51,14 @@ export const Home = () => {
                 console.log("Buscando ruta óptima...");
                 const result = await fetchOptimalRoute(selectedEstaciones.origen.value, selectedEstaciones.destino.value);
                 console.log("Resultado de la ruta:", result);
-
-                if (result) {
+    
+                if (result && result.path) {
                     setRutaOptima(result);
                     setMostrarResultado(true);
                 } else {
                     alert("No se encontró una ruta óptima.");
+                    setRutaOptima(null); // Limpia la ruta óptima anterior
+                    setMostrarResultado(false); // Oculta el modal de resultados
                 }
             }
         } else {
@@ -141,17 +143,17 @@ export const Home = () => {
             </div>
 
             {mostrarResultado && rutaOptima && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <button className="close-btn" onClick={cerrarModal}>X</button>
-                        <ResultaRuta
-                            puntoOrigen={selectedEstaciones.origen?.label || "Desconocido"}
-                            puntoDestino={selectedEstaciones.destino?.label || "Desconocido"}
-                            resultado={`Ruta: ${rutaOptima.path.map(node => node.name).join(" → ")}, Distancia: ${rutaOptima.weight}`}
-                        />
-                    </div>
-                </div>
-            )}
+    <div className="modal">
+        <div className="modal-content">
+            <button className="close-btn" onClick={cerrarModal}>X</button>
+            <ResultaRuta
+                puntoOrigen={selectedEstaciones.origen?.label || "Desconocido"}
+                puntoDestino={selectedEstaciones.destino?.label || "Desconocido"}
+                resultado={rutaOptima.path ? `Ruta: ${rutaOptima.path.map(node => node.name).join(" → ")}, Distancia: ${rutaOptima.weight}` : "No se encontró una ruta óptima."}
+            />
+        </div>
+    </div>
+)}
 
             <div className="map-btn" onClick={abrirMapa}>
                 <button className="btnIn">
