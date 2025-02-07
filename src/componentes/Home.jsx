@@ -1,27 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { FaMapMarkerAlt, FaRoute } from "react-icons/fa"; // Importar iconos de React Icons
 import { ResultaRuta } from "./ResultadoRuta";
 import "./home.css";
+import { fetchStations } from "../api/conexion";
 
 export const Home = () => {
-    const [allEstaciones, setAllEstaciones] = useState([
-        { label: "Estación A", value: "estacion_a" },
-        { label: "Estación B", value: "estacion_b" },
-        { label: "Estación C", value: "estacion_c" },
-        { label: "Estación D", value: "estacion_d" },
-        { label: "Estación E", value: "estacion_e" }
-    ]);
+    const [allEstaciones, setAllEstaciones] = useState([]);
     const [selectedEstaciones, setSelectedEstaciones] = useState({ origen: null, destino: null });
     const [mostrarResultado, setMostrarResultado] = useState(false);
     const [mostrarMapa, setMostrarMapa] = useState(false);
+    const [rutaOptima, setRutaOptima] = useState(null);
 
-    const handleBuscar = () => {
+    useEffect(() => {
+        const loadStations = async () => {
+            const estaciones = await fetchStations();
+            setAllEstaciones(estaciones);
+        };
+        loadStations();
+    }, []);
+
+
+    const handleBuscar = async () => {
         if (selectedEstaciones.origen && selectedEstaciones.destino) {
             if (selectedEstaciones.origen.value === selectedEstaciones.destino.value) {
                 alert("El punto origen debe ser diferente al punto de destino.");
             } else {
-                setMostrarResultado(true);
+                const result = await fetchOptimalRoute(selectedEstaciones.origen.value, selectedEstaciones.destino.value);
+                if (result) {
+                    setRutaOptima(result);
+                    setMostrarResultado(true);
+                } else {
+                    alert("No se encontró una ruta óptima.");
+                }
             }
         } else {
             alert("Por favor, seleccione tanto el origen como el destino.");
@@ -100,14 +111,14 @@ export const Home = () => {
             </div>
 
             {/* Mostrar el modal solo si se hizo una búsqueda */}
-            {mostrarResultado && (
+            {mostrarResultado && rutaOptima && (
                 <div className="modal">
                     <div className="modal-content">
-                        <button className="close-btn" onClick={cerrarModal}>X</button>
+                        <button className="close-btn" onClick={() => setMostrarResultado(false)}>X</button>
                         <ResultaRuta
                             puntoOrigen={selectedEstaciones.origen?.label || "Desconocido"}
                             puntoDestino={selectedEstaciones.destino?.label || "Desconocido"}
-                            resultado="Ruta Óptima A - B"
+                            resultado={`Ruta: ${rutaOptima.path.map(node => node.name).join(" → ")}, Distancia: ${rutaOptima.weight}`}
                         />
                     </div>
                 </div>
