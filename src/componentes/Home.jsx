@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
-import { FaMapMarkerAlt, FaRoute } from "react-icons/fa"; // Importar iconos de React Icons
+import { FaMapMarkerAlt, FaRoute } from "react-icons/fa";
 import { ResultaRuta } from "./ResultadoRuta";
 import "./home.css";
-import { fetchStations } from "../api/conexion";
+import axios from 'axios';
 
 export const Home = () => {
     const [allEstaciones, setAllEstaciones] = useState([]);
@@ -14,19 +14,44 @@ export const Home = () => {
 
     useEffect(() => {
         const loadStations = async () => {
-            const estaciones = await fetchStations();
-            setAllEstaciones(estaciones);
+            try {
+                console.log("Cargando estaciones...");
+                const response = await axios.get('http://localhost:5000/api/estaciones');
+                console.log("Estaciones obtenidas:", response.data);
+                setAllEstaciones(response.data.map(estacion => ({
+                    label: `${estacion.name} - ${estacion.line}`,
+                    value: estacion.id,
+                    ...estacion
+                })));
+            } catch (error) {
+                console.error("Error obteniendo las estaciones:", error);
+            }
         };
         loadStations();
     }, []);
 
+    const fetchOptimalRoute = async (startID, endID) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/api/ruta-optima/${startID}/${endID}`);
+            return response.data; // Devuelve la ruta óptima
+        } catch (error) {
+            console.error("Error obteniendo la ruta óptima:", error);
+            return null;
+        }
+    };
 
     const handleBuscar = async () => {
+        console.log("Origen seleccionado:", selectedEstaciones.origen);
+        console.log("Destino seleccionado:", selectedEstaciones.destino);
+
         if (selectedEstaciones.origen && selectedEstaciones.destino) {
             if (selectedEstaciones.origen.value === selectedEstaciones.destino.value) {
                 alert("El punto origen debe ser diferente al punto de destino.");
             } else {
+                console.log("Buscando ruta óptima...");
                 const result = await fetchOptimalRoute(selectedEstaciones.origen.value, selectedEstaciones.destino.value);
+                console.log("Resultado de la ruta:", result);
+
                 if (result) {
                     setRutaOptima(result);
                     setMostrarResultado(true);
@@ -81,7 +106,10 @@ export const Home = () => {
                         isClearable
                         options={allEstaciones}
                         value={selectedEstaciones.origen}
-                        onChange={(selected) => setSelectedEstaciones({ ...selectedEstaciones, origen: selected })}
+                        onChange={(selected) => {
+                            console.log("Origen seleccionado:", selected);
+                            setSelectedEstaciones({ ...selectedEstaciones, origen: selected });
+                        }}
                         getOptionLabel={(e) => (
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <FaMapMarkerAlt style={{ marginRight: 5 }} />
@@ -96,7 +124,10 @@ export const Home = () => {
                         isClearable
                         options={allEstaciones}
                         value={selectedEstaciones.destino}
-                        onChange={(selected) => setSelectedEstaciones({ ...selectedEstaciones, destino: selected })}
+                        onChange={(selected) => {
+                            console.log("Destino seleccionado:", selected);
+                            setSelectedEstaciones({ ...selectedEstaciones, destino: selected });
+                        }}
                         getOptionLabel={(e) => (
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <FaRoute style={{ marginRight: 5 }} />
@@ -106,15 +137,13 @@ export const Home = () => {
                     />
                 </div>
 
-
                 <button className="btnIn" onClick={handleBuscar}>Buscar</button>
             </div>
 
-            {/* Mostrar el modal solo si se hizo una búsqueda */}
             {mostrarResultado && rutaOptima && (
                 <div className="modal">
                     <div className="modal-content">
-                        <button className="close-btn" onClick={() => setMostrarResultado(false)}>X</button>
+                        <button className="close-btn" onClick={cerrarModal}>X</button>
                         <ResultaRuta
                             puntoOrigen={selectedEstaciones.origen?.label || "Desconocido"}
                             puntoDestino={selectedEstaciones.destino?.label || "Desconocido"}
@@ -124,14 +153,12 @@ export const Home = () => {
                 </div>
             )}
 
-            {/* Imagen en la esquina superior derecha como botón */}
             <div className="map-btn" onClick={abrirMapa}>
                 <button className="btnIn">
                     Ver Mapa
                 </button>
             </div>
 
-            {/* Modal para mostrar la imagen del mapa */}
             {mostrarMapa && (
                 <div className="modal">
                     <div className="modal-content">
