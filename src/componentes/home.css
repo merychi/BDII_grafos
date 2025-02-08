@@ -9,13 +9,11 @@ html, body {
     font-family: 'Poppins', sans-serif;
 }
 
-/* Contenedor principal */
 div {
     text-align: center;
     padding: 20px;
 }
 
-/* Contenedor de los textos principales */
 .textosPrincipales {
     text-align: center;
 }
@@ -33,6 +31,13 @@ div {
     font-style: italic;
 }
 
+
+Texto {
+    font-size: 26px;
+    color: #1d4057;
+    display: block;
+    font-weight: bold;
+}
 
 .texto {
     font-size: 28px;
@@ -108,7 +113,7 @@ button:hover {
 
 .modal-content {
     background-color: #ffffff;
-    padding: 40px;
+    padding: 20px;
     border-radius: 10px;
     width: 80%;
     max-width: 600px;
@@ -127,15 +132,11 @@ button:hover {
 .subtituloModal {
     font-size: 20px;
     color: #333232;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-weight: 500;
+    gap: 25px;
 }
 
-.origenDestinoContainer {
-    display: flex;
-    justify-content: space-around; 
-    margin-bottom: 20px; 
-}
 
 .close-btn {
     position: absolute;
@@ -165,4 +166,75 @@ button:hover {
 
 .zoom-img:hover {
     transform: scale(2.2); 
+}
+.container {
+    text-align: center;
+    justify-content: center;
+}
+
+
+.subtituloModal {
+    font-size: 20px;
+    color: #333232;
+    font-weight: 500;
+    margin: 5px;
+}
+
+
+.origenDestinoContainer {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    font-size: 18px;
+}
+
+
+.rutaContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.lineaBase {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%); 
+    width: 90%; 
+    height: 6px;
+    background-color: #5384b5;
+    z-index: 0;
+}
+
+.nodoContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    margin: 0 15px;
+}
+
+.iconoNodo {
+    font-size: 30px;
+    color: white;
+    background-color: #5384b5;
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.nombreEstacion {
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    margin-top: 5px;
+}
+
+.infoRuta {
+    padding: 2px;
+    gap: 10px;
+    text-align: center;
 }
