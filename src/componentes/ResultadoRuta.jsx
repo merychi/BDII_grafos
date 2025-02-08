@@ -33,7 +33,7 @@ export const ResultaRuta = ({ puntoOrigen, puntoDestino, ruta, distancia, tiempo
                     <strong>Distancia recorrida:</strong> {distancia} km
                 </p>
                 <p className="subtituloModal">
-                    <strong>Tiempo estimado:</strong> {tiempo} min
+                    <strong>Tiempo estimado:</strong> {tiempo} hrs
                 </p>
             </div>
 
