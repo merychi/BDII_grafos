@@ -3,6 +3,12 @@ import "./home.css";
 import { FaMapMarkerAlt, FaRoute } from "react-icons/fa";
 
 export const ResultaRuta = ({ puntoOrigen, puntoDestino, ruta, distancia, tiempo }) => {
+    console.log("Ruta recibida:", ruta);
+
+    if (!ruta || !Array.isArray(ruta)) {
+        return <div>No se pudo obtener la ruta.</div>;
+    }
+
     return (
         <div className="container">
             <h1 className="tituloModal">Resultados de la Búsqueda</h1>
@@ -16,7 +22,6 @@ export const ResultaRuta = ({ puntoOrigen, puntoDestino, ruta, distancia, tiempo
                 </p>
             </div>
 
-            {/* Línea azul de fondo */}
             <div className="rutaContainer">
                 <div className="lineaBase"></div>
                 {ruta.map((estacion, index) => (
@@ -27,7 +32,6 @@ export const ResultaRuta = ({ puntoOrigen, puntoDestino, ruta, distancia, tiempo
                 ))}
             </div>
 
-            {/* Información adicional */}
             <div className="infoRuta">
                 <p className="subtituloModal">
                     <strong>Distancia recorrida:</strong> {distancia} km
@@ -38,7 +42,8 @@ export const ResultaRuta = ({ puntoOrigen, puntoDestino, ruta, distancia, tiempo
             </div>
 
             <div>
-            <texto>Esperamos que disfrute de su viaje</texto>            </div>
+                <p>Esperamos que disfrute de su viaje</p>
+            </div>
         </div>
     );
 };

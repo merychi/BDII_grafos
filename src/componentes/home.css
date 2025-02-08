@@ -192,21 +192,13 @@ button:hover {
 .rutaContainer {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     position: relative;
     margin-top: 20px;
     padding: 20px;
-}
-
-.lineaBase {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%); 
-    width: 90%; 
-    height: 6px;
-    background-color: #5384b5;
-    z-index: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 .nodoContainer {
@@ -216,6 +208,7 @@ button:hover {
     position: relative;
     z-index: 1;
     margin: 0 15px;
+    min-width: 100px;
 }
 
 .iconoNodo {
@@ -227,10 +220,13 @@ button:hover {
 }
 
 .nombreEstacion {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: bold;
-    color: white;
+    color: #5384b5;
     margin-top: 5px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .infoRuta {
